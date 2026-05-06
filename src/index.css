@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-obsidian text-ivory font-inter antialiased overflow-x-hidden m-0 p-0;
+  }
+}
+
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.05;
+}
+
+.rounded-organic {
+  border-radius: clamp(2rem, 4vw, 3rem);
+}
+
+.text-drama {
+  @apply font-playfair italic;
+}
+
+.text-data {
+  @apply font-mono;
+}
+
+/* Hide scrollbar for clean look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0D0D12; 
+}
+::-webkit-scrollbar-thumb {
+  background: #2A2A35; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C9A84C; 
+}
