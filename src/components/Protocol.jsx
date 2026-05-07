@@ -123,34 +123,41 @@ export default function Protocol() {
               {/* Background glow */}
               <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[500px] h-[500px] bg-champagne/4 rounded-full blur-[120px] pointer-events-none" />
 
-              {/* SVG decoration */}
-              <div className="absolute -right-12 top-1/2 -translate-y-1/2 w-[28rem] h-[28rem] pointer-events-none opacity-25">
-                {step.svg}
-              </div>
-
-              {/* Number watermark */}
-              <span className="text-drama text-champagne/8 text-[12rem] font-black absolute -top-8 -left-4 pointer-events-none select-none leading-none">
+              {/* Number watermark — bottom-right corner, purely decorative */}
+              <span className="text-drama text-champagne/[0.06] text-[18rem] font-black absolute -bottom-16 -right-8 pointer-events-none select-none leading-none z-0">
                 {step.id}
               </span>
 
-              {/* Content */}
-              <div className="relative z-10 md:w-3/5">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-champagne/25 bg-champagne/5 mb-6">
+              {/* SVG decoration — centered on right half */}
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-72 h-72 pointer-events-none opacity-20 hidden md:block">
+                {step.svg}
+              </div>
+
+              {/* Content — fully isolated from number watermark */}
+              <div className="relative z-10 md:w-[58%] flex flex-col">
+
+                {/* Tag badge */}
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-champagne/25 bg-champagne/5 mb-8 self-start">
                   <span className="w-1.5 h-1.5 rounded-full bg-champagne animate-pulse" />
                   <span className="font-mono text-[10px] text-champagne tracking-widest uppercase">{step.tag}</span>
                 </div>
 
-                <h3 className="text-4xl md:text-5xl font-inter font-black text-ivory mb-3 tracking-tight leading-tight">
-                  {step.title}
-                </h3>
-                <p className="text-drama text-champagne/80 text-xl md:text-2xl font-normal mb-6">
+                {/* Step number pill — small, elegant */}
+                <div className="flex items-baseline gap-4 mb-4">
+                  <span className="font-inter font-black text-champagne/30 text-5xl leading-none">{step.id}</span>
+                  <h3 className="text-3xl md:text-4xl font-inter font-black text-ivory tracking-tight leading-tight">
+                    {step.title}
+                  </h3>
+                </div>
+
+                <p className="text-drama text-champagne/80 text-xl font-normal mb-6 ml-[3.5rem]">
                   {step.subtitle}
                 </p>
-                <p className="text-ivory/55 font-inter text-base md:text-lg leading-relaxed font-light mb-8 max-w-lg">
+                <p className="text-ivory/55 font-inter text-base leading-relaxed font-light mb-8 ml-[3.5rem] max-w-md">
                   {step.desc}
                 </p>
 
-                <div className="flex items-start gap-3 bg-champagne/5 border border-champagne/15 rounded-2xl px-6 py-4 max-w-lg">
+                <div className="flex items-start gap-3 bg-champagne/5 border border-champagne/15 rounded-2xl px-6 py-4 ml-[3.5rem] max-w-md">
                   <span className="text-champagne font-bold text-lg shrink-0 mt-0.5">→</span>
                   <p className="font-mono text-[11px] text-champagne/80 leading-relaxed">{step.proof}</p>
                 </div>
