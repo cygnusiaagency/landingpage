@@ -6,9 +6,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 const OBJECTIONS = [
-  '"¿Y si no funciona para mi industria?"',
-  '"¿Cuánto tiempo lleva implementar?"',
-  '"¿Necesito cambiar toda mi infraestructura?"',
+  { q: '"¿Y si no funciona para mi industria?"', a: 'Hemos implementado sistemas en +12 industrias. Adaptamos el modelo a tu contexto específico.' },
+  { q: '"¿Cuánto tiempo lleva implementar?"', a: 'Primera fase operativa en 30 días. Sin interrumpir tu flujo actual.' },
+  { q: '"¿Necesito cambiar toda mi infraestructura?"', a: 'Nos integramos a tu stack actual. No reemplazamos, potenciamos lo que ya tienes.' },
 ];
 
 export default function FooterCTA() {
@@ -17,21 +17,28 @@ export default function FooterCTA() {
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      gsap.from('.cta-headline', {
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
-        y: 60, opacity: 0, duration: 1.1, ease: 'power3.out',
-      });
-      gsap.from('.cta-sub', {
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 70%' },
-        y: 40, opacity: 0, duration: 0.9, ease: 'power3.out', delay: 0.2,
-      });
-      gsap.from('.cta-form-wrap', {
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 65%' },
-        y: 50, opacity: 0, duration: 1, ease: 'power3.out', delay: 0.35,
-      });
-      gsap.from('.objection-item', {
-        scrollTrigger: { trigger: '.objections-block', start: 'top 85%' },
-        y: 30, opacity: 0, duration: 0.7, stagger: 0.12, ease: 'power3.out',
+      gsap.fromTo('.cta-headline',
+        { y: 50, autoAlpha: 0 },
+        {
+          y: 0, autoAlpha: 1, duration: 1.1, ease: 'power3.out',
+          scrollTrigger: { trigger: '.cta-headline', start: 'top 90%', toggleActions: 'play none none none' }
+        }
+      );
+      gsap.fromTo('.cta-form-wrap',
+        { y: 50, autoAlpha: 0 },
+        {
+          y: 0, autoAlpha: 1, duration: 1, ease: 'power3.out', delay: 0.2,
+          scrollTrigger: { trigger: '.cta-form-wrap', start: 'top 90%', toggleActions: 'play none none none' }
+        }
+      );
+      gsap.utils.toArray('.objection-item').forEach((item, i) => {
+        gsap.fromTo(item,
+          { y: 30, autoAlpha: 0 },
+          {
+            y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out', delay: i * 0.12,
+            scrollTrigger: { trigger: item, start: 'top 92%', toggleActions: 'play none none none' }
+          }
+        );
       });
     }, sectionRef);
     return () => ctx.revert();
@@ -59,7 +66,7 @@ export default function FooterCTA() {
 
   return (
     <footer id="contacto" ref={sectionRef} className="bg-[#080810] pt-36 pb-12 px-6 rounded-t-[4rem] relative z-20 shadow-[0_-30px_80px_rgba(0,0,0,0.6)] overflow-hidden">
-      
+
       {/* Ambient orbs */}
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-champagne/5 rounded-full blur-[150px] pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-champagne/3 rounded-full blur-[120px] pointer-events-none" />
@@ -67,19 +74,19 @@ export default function FooterCTA() {
       <div className="max-w-5xl mx-auto relative z-10">
 
         {/* Headline */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-12">
           <span className="cta-headline font-mono text-[11px] text-champagne tracking-[0.25em] uppercase mb-6 block">Auditoría Gratuita · Sin Compromiso</span>
           <h2 className="cta-headline text-4xl md:text-6xl lg:text-7xl font-inter font-black text-ivory tracking-tight leading-tight mb-6">
             Cada semana que esperas,<br />
             <span className="text-drama text-champagne font-normal">tu competencia te alcanza.</span>
           </h2>
-          <p className="cta-sub text-ivory/55 font-inter text-lg max-w-2xl mx-auto font-light leading-relaxed">
+          <p className="text-ivory/55 font-inter text-lg max-w-2xl mx-auto font-light leading-relaxed">
             Una conversación de 30 minutos. Nosotros llegamos con el diagnóstico de tus procesos ya hecho. Tú decides si seguimos. Sin presión. Sin letra pequeña.
           </p>
         </div>
 
         {/* Urgency bar */}
-        <div className="cta-sub flex items-center justify-center gap-3 mb-16">
+        <div className="flex items-center justify-center gap-3 mb-16">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
@@ -147,17 +154,13 @@ export default function FooterCTA() {
         </div>
 
         {/* Objections */}
-        <div className="objections-block mb-20">
+        <div className="mb-20">
           <p className="text-center font-mono text-[10px] text-ivory/30 tracking-widest uppercase mb-8">Respondemos tus dudas antes de que las hagas</p>
           <div className="grid md:grid-cols-3 gap-4">
-            {OBJECTIONS.map((q, i) => (
+            {OBJECTIONS.map((item, i) => (
               <div key={i} className="objection-item bg-white/2 border border-white/5 rounded-3xl p-6 hover:border-champagne/20 transition-colors duration-300">
-                <p className="font-inter text-sm text-ivory/70 italic mb-3 font-light">{q}</p>
-                <p className="font-mono text-[10px] text-champagne/60 tracking-wide">
-                  {i === 0 && 'Hemos implementado sistemas en +12 industrias. Adaptamos el modelo a tu contexto.'}
-                  {i === 1 && 'Primera fase operativa en 30 días. Sin interrumpir tu flujo actual.'}
-                  {i === 2 && 'Nos integramos a tu stack actual. No reemplazamos, potenciamos.'}
-                </p>
+                <p className="font-inter text-sm text-ivory/70 italic mb-3 font-light">{item.q}</p>
+                <p className="font-mono text-[10px] text-champagne/60 tracking-wide leading-relaxed">{item.a}</p>
               </div>
             ))}
           </div>
