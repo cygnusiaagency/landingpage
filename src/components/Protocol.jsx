@@ -4,101 +4,179 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const steps = [
+  {
+    id: '01',
+    tag: 'SEMANA 1',
+    title: 'Radiografía Total',
+    subtitle: 'Encontramos lo que te cuesta dinero y nadie ha cuantificado.',
+    desc: 'En 5 días mapeamos cada proceso, cada handoff manual, cada cuello de botella. No generamos un PDF. Generamos un plan de acción con un número exacto de lo que estás perdiendo cada mes.',
+    proof: 'Promedio detectado: $18,000 USD/mes en ineficiencias ocultas.',
+    svg: (
+      <svg viewBox="0 0 200 200" className="w-full h-full text-champagne">
+        <defs>
+          <radialGradient id="g1" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="currentColor" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <circle cx="100" cy="100" r="90" fill="url(#g1)" />
+        <circle cx="100" cy="100" r="75" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="3 6" className="animate-[spin_60s_linear_infinite]" />
+        <circle cx="100" cy="100" r="55" fill="none" stroke="currentColor" strokeWidth="0.8" strokeDasharray="6 4" className="animate-[spin_30s_linear_infinite_reverse]" />
+        <circle cx="100" cy="100" r="32" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="100" cy="100" r="8" fill="currentColor" className="opacity-60" />
+        <line x1="100" y1="10" x2="100" y2="190" stroke="currentColor" strokeWidth="0.3" strokeDasharray="2 8" className="opacity-30" />
+        <line x1="10" y1="100" x2="190" y2="100" stroke="currentColor" strokeWidth="0.3" strokeDasharray="2 8" className="opacity-30" />
+        <circle cx="100" cy="25" r="4" fill="currentColor" className="opacity-50 animate-pulse" />
+        <circle cx="175" cy="100" r="4" fill="currentColor" className="opacity-50 animate-pulse" style={{ animationDelay: '0.5s' }} />
+        <circle cx="100" cy="175" r="4" fill="currentColor" className="opacity-50 animate-pulse" style={{ animationDelay: '1s' }} />
+        <circle cx="25" cy="100" r="4" fill="currentColor" className="opacity-50 animate-pulse" style={{ animationDelay: '1.5s' }} />
+      </svg>
+    ),
+  },
+  {
+    id: '02',
+    tag: 'SEMANA 2-3',
+    title: 'Arquitectura de Sistemas',
+    subtitle: 'Diseñamos el sistema operativo de tu empresa del futuro.',
+    desc: 'Cada agente tiene un rol, un objetivo y una métrica. Tus flujos dejan de depender de quién está en la oficina ese día. El sistema sabe qué hacer antes de que tú lo pienses.',
+    proof: 'Resultado: una empresa que opera igual si tienes 2 o 200 clientes simultáneos.',
+    svg: (
+      <svg viewBox="0 0 200 200" className="w-full h-full text-champagne">
+        <polygon points="100,15 185,155 15,155" fill="none" stroke="currentColor" strokeWidth="0.6" className="opacity-20 animate-[pulse_5s_ease-in-out_infinite]" />
+        <polygon points="100,40 162,140 38,140" fill="none" stroke="currentColor" strokeWidth="1" className="opacity-30" />
+        <polygon points="100,70 135,128 65,128" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-50" />
+        <line x1="100" y1="40" x2="100" y2="100" stroke="currentColor" strokeWidth="0.8" className="opacity-40" />
+        <line x1="38" y1="140" x2="100" y2="100" stroke="currentColor" strokeWidth="0.8" className="opacity-40" />
+        <line x1="162" y1="140" x2="100" y2="100" stroke="currentColor" strokeWidth="0.8" className="opacity-40" />
+        <circle cx="100" cy="100" r="6" fill="currentColor" className="opacity-70" />
+        <circle cx="100" cy="40" r="4" fill="currentColor" className="opacity-50 animate-pulse" />
+        <circle cx="38" cy="140" r="4" fill="currentColor" className="opacity-50 animate-pulse" style={{ animationDelay: '0.7s' }} />
+        <circle cx="162" cy="140" r="4" fill="currentColor" className="opacity-50 animate-pulse" style={{ animationDelay: '1.4s' }} />
+      </svg>
+    ),
+  },
+  {
+    id: '03',
+    tag: 'SEMANA 4',
+    title: 'Despliegue & Resultado',
+    subtitle: 'Operativo. Medido. Rentable desde el día uno.',
+    desc: 'Inyectamos el sistema en tus operaciones con zero downtime. Entregamos un dashboard de telemetría en tiempo real. Tú ves los números. Nosotros calibramos hasta que el ROI sea imposible de ignorar.',
+    proof: 'Garantía: si no hay mejora en 30 días, seguimos trabajando sin costo adicional.',
+    svg: (
+      <svg viewBox="0 0 200 200" className="w-full h-full text-champagne">
+        <path d="M20 140 Q 50 60, 100 100 T 180 60" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-60 animate-[pulse_3s_ease-in-out_infinite]" />
+        <path d="M20 140 Q 50 60, 100 100 T 180 60" fill="none" stroke="currentColor" strokeWidth="8" strokeOpacity="0.05" />
+        <path d="M20 160 Q 50 80, 100 120 T 180 80" fill="none" stroke="currentColor" strokeWidth="0.8" strokeDasharray="4 6" className="opacity-20" />
+        <circle cx="180" cy="60" r="6" fill="currentColor" className="animate-pulse opacity-80" />
+        <circle cx="20" cy="140" r="4" fill="currentColor" className="opacity-40" />
+        <circle cx="100" cy="100" r="4" fill="currentColor" className="opacity-50" />
+        <line x1="20" y1="170" x2="185" y2="170" stroke="currentColor" strokeWidth="0.5" strokeDasharray="3 6" className="opacity-20" />
+        <line x1="20" y1="30" x2="20" y2="170" stroke="currentColor" strokeWidth="0.5" strokeDasharray="3 6" className="opacity-20" />
+      </svg>
+    ),
+  },
+];
+
 export default function Protocol() {
   const containerRef = useRef(null);
-  
+
   useEffect(() => {
     let ctx = gsap.context(() => {
       const cards = gsap.utils.toArray('.protocol-card-inner');
-      const totalCards = cards.length;
 
+      // Entrance animation for each card
       cards.forEach((card, i) => {
-        if (i !== totalCards - 1) {
+        gsap.from(card, {
+          scrollTrigger: {
+            trigger: `.protocol-wrapper-${i}`,
+            start: 'top 85%',
+          },
+          y: 60, opacity: 0, duration: 1, ease: 'power3.out',
+        });
+      });
+
+      // Stacking / scale-out effect
+      cards.forEach((card, i) => {
+        if (i !== cards.length - 1) {
           gsap.to(card, {
-            scale: 0.9,
+            scale: 0.88,
             opacity: 0,
-            y: -50,
-            ease: "none",
+            y: -40,
+            ease: 'none',
             scrollTrigger: {
               trigger: `.protocol-wrapper-${i}`,
-              start: "top top",
-              end: "bottom top",
+              start: 'top top',
+              end: 'bottom top',
               scrub: true,
-            }
+            },
           });
         }
+      });
+
+      // Animated tag badge per card
+      gsap.utils.toArray('.card-tag').forEach((tag, i) => {
+        gsap.from(tag, {
+          scrollTrigger: { trigger: `.protocol-wrapper-${i}`, start: 'top 80%' },
+          x: -20, opacity: 0, duration: 0.8, ease: 'power3.out', delay: 0.3,
+        });
       });
     }, containerRef);
     return () => ctx.revert();
   }, []);
 
-  const steps = [
-    {
-      id: "01",
-      title: "Auditoría Profunda",
-      desc: "Mapeamos cada interacción, costo oculto y cuello de botella de tu infraestructura actual. La radiografía exacta de tu eficiencia.",
-      svg: (
-        <svg viewBox="0 0 100 100" className="w-full h-full opacity-20 text-champagne">
-          <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 4" className="animate-[spin_40s_linear_infinite]" />
-          <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" strokeWidth="1" className="animate-[spin_20s_linear_infinite_reverse]" />
-          <circle cx="50" cy="50" r="10" fill="currentColor" className="animate-[pulse_3s_ease-in-out_infinite] opacity-50" />
-          <path d="M50 0 L50 100 M0 50 L100 50" stroke="currentColor" strokeWidth="0.2" className="opacity-50" />
-        </svg>
-      )
-    },
-    {
-      id: "02",
-      title: "Diseño de Arquitectura",
-      desc: "Modelamos un sistema estelar donde los agentes de IA se encargan del volumen masivo y tu equipo humano aporta el valor crítico.",
-      svg: (
-        <svg viewBox="0 0 100 100" className="w-full h-full opacity-20 text-champagne">
-           <polygon points="50 10, 90 80, 10 80" fill="none" stroke="currentColor" strokeWidth="0.5" className="animate-[pulse_4s_ease-in-out_infinite]" />
-           <polygon points="50 25, 75 70, 25 70" fill="none" stroke="currentColor" strokeWidth="1" />
-           <circle cx="50" cy="55" r="5" fill="currentColor" className="opacity-50" />
-           <path d="M50 25 L50 55 M25 70 L50 55 M75 70 L50 55" stroke="currentColor" strokeWidth="0.5" />
-        </svg>
-      )
-    },
-    {
-      id: "03",
-      title: "Despliegue & Calibración",
-      desc: "Inyectamos el sistema en tus operaciones. Monitoreamos la telemetría en tiempo real y calibramos los motores para una precisión absoluta.",
-      svg: (
-        <svg viewBox="0 0 100 100" className="w-full h-full opacity-20 text-champagne">
-          <path d="M10 50 Q 25 10, 50 50 T 90 50" fill="none" stroke="currentColor" strokeWidth="1" className="animate-[pulse_2s_ease-in-out_infinite]" />
-          <path d="M10 50 Q 25 90, 50 50 T 90 50" fill="none" stroke="currentColor" strokeWidth="1" className="animate-[pulse_2s_ease-in-out_infinite_reverse]" />
-          <line x1="10" y1="50" x2="90" y2="50" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
-        </svg>
-      )
-    }
-  ];
-
   return (
     <section id="protocolo" ref={containerRef} className="relative bg-obsidian py-32 px-6">
       <div className="max-w-5xl mx-auto mb-24 text-center">
-        <span className="font-mono text-xs text-champagne tracking-widest uppercase mb-4 block">Metodología Operativa</span>
-        <h2 className="text-4xl md:text-5xl font-inter font-bold text-ivory">
-          El Protocolo <span className="text-drama text-champagne">Cygnus</span>
+        <span className="font-mono text-[11px] text-champagne tracking-[0.25em] uppercase mb-4 block">Metodología Operativa</span>
+        <h2 className="text-4xl md:text-6xl font-inter font-black text-ivory tracking-tight leading-tight">
+          De cero a resultados<br />
+          <span className="text-drama text-champagne font-normal">en 30 días. No en 6 meses.</span>
         </h2>
+        <p className="text-ivory/50 font-inter text-lg mt-6 max-w-xl mx-auto font-light">
+          El tiempo que tardas en evaluarnos es tiempo que tu competencia usa para ganar clientes que deberían ser tuyos.
+        </p>
       </div>
 
       <div className="max-w-5xl mx-auto">
         {steps.map((step, index) => (
           <div key={index} className={`protocol-wrapper-${index} sticky top-0 h-screen flex items-center justify-center`}>
-            <div className="protocol-card-inner w-full h-[75vh] bg-[#121218] rounded-[3rem] border border-white/5 p-12 flex flex-col md:flex-row items-center justify-between relative overflow-hidden shadow-2xl will-change-transform">
-              
-              {/* Background Glow */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-champagne/5 rounded-full blur-[100px] pointer-events-none"></div>
+            <div className="protocol-card-inner w-full h-[78vh] bg-[#0E0E18] rounded-[3rem] border border-white/5 p-10 md:p-14 flex flex-col md:flex-row items-center justify-between relative overflow-hidden shadow-2xl will-change-transform hover:border-champagne/15 transition-colors duration-700">
 
-              <div className="absolute -right-20 top-1/2 -translate-y-1/2 w-[30rem] h-[30rem] pointer-events-none">
+              {/* Background glow */}
+              <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[500px] h-[500px] bg-champagne/4 rounded-full blur-[120px] pointer-events-none" />
+
+              {/* SVG decoration */}
+              <div className="absolute -right-12 top-1/2 -translate-y-1/2 w-[28rem] h-[28rem] pointer-events-none opacity-25">
                 {step.svg}
               </div>
-              
-              <div className="relative z-10 md:w-1/2 md:pr-12">
-                <span className="text-drama text-champagne/30 text-9xl absolute -top-16 -left-8 pointer-events-none select-none">{step.id}</span>
-                <div className="relative z-10 mt-12">
-                  <h3 className="text-4xl font-inter font-bold text-ivory mb-6 tracking-tight">{step.title}</h3>
-                  <p className="text-ivory/60 font-inter text-lg leading-relaxed font-light">{step.desc}</p>
+
+              {/* Number watermark */}
+              <span className="text-drama text-champagne/8 text-[12rem] font-black absolute -top-8 -left-4 pointer-events-none select-none leading-none">
+                {step.id}
+              </span>
+
+              {/* Content */}
+              <div className="relative z-10 md:w-3/5">
+                <div className="card-tag inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-champagne/25 bg-champagne/5 mb-6">
+                  <span className="w-1.5 h-1.5 rounded-full bg-champagne animate-pulse" />
+                  <span className="font-mono text-[10px] text-champagne tracking-widest uppercase">{step.tag}</span>
+                </div>
+
+                <h3 className="text-4xl md:text-5xl font-inter font-black text-ivory mb-3 tracking-tight leading-tight">
+                  {step.title}
+                </h3>
+                <p className="text-drama text-champagne/80 text-xl md:text-2xl font-normal mb-6">
+                  {step.subtitle}
+                </p>
+                <p className="text-ivory/55 font-inter text-base md:text-lg leading-relaxed font-light mb-8 max-w-lg">
+                  {step.desc}
+                </p>
+
+                {/* Proof bar */}
+                <div className="flex items-start gap-3 bg-champagne/5 border border-champagne/15 rounded-2xl px-6 py-4 max-w-lg">
+                  <span className="text-champagne font-bold text-lg shrink-0 mt-0.5">→</span>
+                  <p className="font-mono text-[11px] text-champagne/80 leading-relaxed">{step.proof}</p>
                 </div>
               </div>
             </div>
