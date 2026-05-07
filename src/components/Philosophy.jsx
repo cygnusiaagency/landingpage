@@ -16,9 +16,9 @@ export default function Philosophy() {
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      // Parallax background
-      gsap.to('.parallax-bg', {
-        yPercent: 25,
+      // Parallax bg - use document scroll, not container
+      gsap.to('.phil-parallax-bg', {
+        yPercent: 20,
         ease: 'none',
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -28,39 +28,43 @@ export default function Philosophy() {
         },
       });
 
-      // Left side fade-slide
-      gsap.from('.phil-left', {
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 65%' },
-        x: -60, opacity: 0, duration: 1.1, ease: 'power3.out',
+      // Left column
+      gsap.fromTo('.phil-left',
+        { x: -50, autoAlpha: 0 },
+        {
+          x: 0, autoAlpha: 1, duration: 1.1, ease: 'power3.out',
+          scrollTrigger: { trigger: '.phil-left', start: 'top 88%', toggleActions: 'play none none none' }
+        }
+      );
+
+      // Right column
+      gsap.fromTo('.phil-right',
+        { x: 50, autoAlpha: 0 },
+        {
+          x: 0, autoAlpha: 1, duration: 1.1, ease: 'power3.out', delay: 0.15,
+          scrollTrigger: { trigger: '.phil-right', start: 'top 88%', toggleActions: 'play none none none' }
+        }
+      );
+
+      // Pain items
+      gsap.utils.toArray('.pain-item').forEach((item, i) => {
+        gsap.fromTo(item,
+          { x: -25, autoAlpha: 0 },
+          {
+            x: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out', delay: i * 0.1,
+            scrollTrigger: { trigger: item, start: 'top 92%', toggleActions: 'play none none none' }
+          }
+        );
       });
 
-      // Right side fade-slide
-      gsap.from('.phil-right', {
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 65%' },
-        x: 60, opacity: 0, duration: 1.1, ease: 'power3.out', delay: 0.15,
-      });
-
-      // Pain items stagger
-      gsap.from('.pain-item', {
-        scrollTrigger: { trigger: '.pain-list', start: 'top 75%' },
-        x: -30, opacity: 0, duration: 0.7, stagger: 0.12, ease: 'power3.out',
-      });
-
-      // Line draw on the divider
-      gsap.from('.divider-line', {
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 50%' },
-        scaleY: 0, duration: 1.2, ease: 'power3.out', transformOrigin: 'top',
-      });
-
-      // Counter animation
-      gsap.from('.counter-num', {
-        scrollTrigger: { trigger: '.counter-num', start: 'top 80%' },
-        textContent: 0,
-        duration: 2,
-        ease: 'power2.out',
-        snap: { textContent: 1 },
-        stagger: 0.2,
-      });
+      // Divider line
+      gsap.fromTo('.divider-line',
+        { scaleY: 0 },
+        {
+          scaleY: 1, duration: 1.2, ease: 'power3.out', transformOrigin: 'top',
+          scrollTrigger: { trigger: '.divider-line', start: 'top 85%', toggleActions: 'play none none none' }
+        }
+      );
     }, sectionRef);
     return () => ctx.revert();
   }, []);
@@ -68,11 +72,11 @@ export default function Philosophy() {
   return (
     <section id="filosofia" ref={sectionRef} className="py-40 px-6 relative overflow-hidden bg-obsidian flex items-center justify-center min-h-screen">
       {/* Background */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 pointer-events-none">
         <img
           src="https://images.unsplash.com/photo-1574621100236-d25b64dc8089?q=80&w=2564&auto=format&fit=crop"
           alt="Dark texture"
-          className="parallax-bg w-full h-[130%] object-cover opacity-[0.12] scale-105 origin-top"
+          className="phil-parallax-bg w-full h-[130%] object-cover opacity-[0.12] scale-105 origin-top"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/85 to-obsidian" />
         <div className="absolute inset-0 bg-gradient-to-b from-obsidian via-transparent to-obsidian" />
@@ -92,14 +96,14 @@ export default function Philosophy() {
 
         <div className="grid md:grid-cols-[1fr_1px_1fr] gap-0 items-start">
           {/* LEFT: The pain */}
-          <div className="phil-left pr-8 md:pr-16 pb-12 md:pb-0">
+          <div className="phil-left pr-0 md:pr-16 pb-12 md:pb-0">
             <div className="mb-8">
               <span className="font-mono text-[10px] text-white/30 tracking-widest uppercase border border-white/10 px-3 py-1 rounded-full">El problema que ignoras</span>
             </div>
-            <p className="font-inter text-2xl font-light text-ivory/80 mb-10 leading-relaxed">
+            <p className="font-inter text-xl font-light text-ivory/80 mb-10 leading-relaxed">
               No es falta de talento, ni de capital. Es que estás construyendo un edificio de 30 pisos sobre una base de procesos diseñados para el piso 2.
             </p>
-            <div className="pain-list space-y-4">
+            <div className="space-y-4">
               {TRUTHS.map((t, i) => (
                 <div key={i} className="pain-item flex items-start gap-4 group">
                   <div className="w-5 h-5 rounded-full border border-red-500/30 bg-red-500/5 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-red-500/15 transition-colors duration-300">
@@ -112,10 +116,10 @@ export default function Philosophy() {
           </div>
 
           {/* Divider */}
-          <div className="divider-line hidden md:block w-px bg-gradient-to-b from-transparent via-champagne/20 to-transparent self-stretch" />
+          <div className="divider-line hidden md:block w-px bg-gradient-to-b from-transparent via-champagne/20 to-transparent self-stretch mx-8" />
 
           {/* RIGHT: The solution */}
-          <div className="phil-right pl-0 md:pl-16 pt-12 md:pt-0">
+          <div className="phil-right pl-0 md:pl-8 pt-12 md:pt-0">
             <div className="mb-8">
               <span className="font-mono text-[10px] text-champagne tracking-widest uppercase border border-champagne/20 bg-champagne/5 px-3 py-1 rounded-full">El estándar Cygnus</span>
             </div>
@@ -133,13 +137,13 @@ export default function Philosophy() {
             {/* Mini stats */}
             <div className="grid grid-cols-3 gap-4">
               {[
-                { num: '90', unit: 'días', label: 'Para ver ROI' },
+                { num: '90', unit: ' días', label: 'Para ver ROI' },
                 { num: '3', unit: 'x', label: 'Más velocidad' },
                 { num: '0', unit: 'h', label: 'De supervisión' },
               ].map((s, i) => (
                 <div key={i} className="text-center p-4 rounded-2xl bg-white/3 border border-white/5 hover:border-champagne/20 transition-colors duration-300">
                   <div className="font-inter font-black text-2xl text-champagne">
-                    <span className="counter-num">{s.num}</span><span className="text-base">{s.unit}</span>
+                    {s.num}<span className="text-base">{s.unit}</span>
                   </div>
                   <div className="font-mono text-[9px] text-ivory/40 tracking-widest mt-1 uppercase">{s.label}</div>
                 </div>
