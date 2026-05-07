@@ -15,18 +15,16 @@ const steps = [
     svg: (
       <svg viewBox="0 0 200 200" className="w-full h-full text-champagne">
         <defs>
-          <radialGradient id="g1" cx="50%" cy="50%" r="50%">
+          <radialGradient id="pg1" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="currentColor" stopOpacity="0.15" />
             <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
           </radialGradient>
         </defs>
-        <circle cx="100" cy="100" r="90" fill="url(#g1)" />
+        <circle cx="100" cy="100" r="90" fill="url(#pg1)" />
         <circle cx="100" cy="100" r="75" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="3 6" className="animate-[spin_60s_linear_infinite]" />
         <circle cx="100" cy="100" r="55" fill="none" stroke="currentColor" strokeWidth="0.8" strokeDasharray="6 4" className="animate-[spin_30s_linear_infinite_reverse]" />
         <circle cx="100" cy="100" r="32" fill="none" stroke="currentColor" strokeWidth="1.5" />
         <circle cx="100" cy="100" r="8" fill="currentColor" className="opacity-60" />
-        <line x1="100" y1="10" x2="100" y2="190" stroke="currentColor" strokeWidth="0.3" strokeDasharray="2 8" className="opacity-30" />
-        <line x1="10" y1="100" x2="190" y2="100" stroke="currentColor" strokeWidth="0.3" strokeDasharray="2 8" className="opacity-30" />
         <circle cx="100" cy="25" r="4" fill="currentColor" className="opacity-50 animate-pulse" />
         <circle cx="175" cy="100" r="4" fill="currentColor" className="opacity-50 animate-pulse" style={{ animationDelay: '0.5s' }} />
         <circle cx="100" cy="175" r="4" fill="currentColor" className="opacity-50 animate-pulse" style={{ animationDelay: '1s' }} />
@@ -71,8 +69,6 @@ const steps = [
         <circle cx="180" cy="60" r="6" fill="currentColor" className="animate-pulse opacity-80" />
         <circle cx="20" cy="140" r="4" fill="currentColor" className="opacity-40" />
         <circle cx="100" cy="100" r="4" fill="currentColor" className="opacity-50" />
-        <line x1="20" y1="170" x2="185" y2="170" stroke="currentColor" strokeWidth="0.5" strokeDasharray="3 6" className="opacity-20" />
-        <line x1="20" y1="30" x2="20" y2="170" stroke="currentColor" strokeWidth="0.5" strokeDasharray="3 6" className="opacity-20" />
       </svg>
     ),
   },
@@ -85,41 +81,22 @@ export default function Protocol() {
     let ctx = gsap.context(() => {
       const cards = gsap.utils.toArray('.protocol-card-inner');
 
-      // Entrance animation for each card
-      cards.forEach((card, i) => {
-        gsap.from(card, {
-          scrollTrigger: {
-            trigger: `.protocol-wrapper-${i}`,
-            start: 'top 85%',
-          },
-          y: 60, opacity: 0, duration: 1, ease: 'power3.out',
-        });
-      });
-
-      // Stacking / scale-out effect
+      // Scale-out stacking effect
       cards.forEach((card, i) => {
         if (i !== cards.length - 1) {
           gsap.to(card, {
             scale: 0.88,
-            opacity: 0,
+            autoAlpha: 0,
             y: -40,
             ease: 'none',
             scrollTrigger: {
-              trigger: `.protocol-wrapper-${i}`,
+              trigger: `.proto-wrap-${i}`,
               start: 'top top',
               end: 'bottom top',
               scrub: true,
             },
           });
         }
-      });
-
-      // Animated tag badge per card
-      gsap.utils.toArray('.card-tag').forEach((tag, i) => {
-        gsap.from(tag, {
-          scrollTrigger: { trigger: `.protocol-wrapper-${i}`, start: 'top 80%' },
-          x: -20, opacity: 0, duration: 0.8, ease: 'power3.out', delay: 0.3,
-        });
       });
     }, containerRef);
     return () => ctx.revert();
@@ -140,7 +117,7 @@ export default function Protocol() {
 
       <div className="max-w-5xl mx-auto">
         {steps.map((step, index) => (
-          <div key={index} className={`protocol-wrapper-${index} sticky top-0 h-screen flex items-center justify-center`}>
+          <div key={index} className={`proto-wrap-${index} sticky top-0 h-screen flex items-center justify-center`}>
             <div className="protocol-card-inner w-full h-[78vh] bg-[#0E0E18] rounded-[3rem] border border-white/5 p-10 md:p-14 flex flex-col md:flex-row items-center justify-between relative overflow-hidden shadow-2xl will-change-transform hover:border-champagne/15 transition-colors duration-700">
 
               {/* Background glow */}
@@ -158,7 +135,7 @@ export default function Protocol() {
 
               {/* Content */}
               <div className="relative z-10 md:w-3/5">
-                <div className="card-tag inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-champagne/25 bg-champagne/5 mb-6">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-champagne/25 bg-champagne/5 mb-6">
                   <span className="w-1.5 h-1.5 rounded-full bg-champagne animate-pulse" />
                   <span className="font-mono text-[10px] text-champagne tracking-widest uppercase">{step.tag}</span>
                 </div>
@@ -173,7 +150,6 @@ export default function Protocol() {
                   {step.desc}
                 </p>
 
-                {/* Proof bar */}
                 <div className="flex items-start gap-3 bg-champagne/5 border border-champagne/15 rounded-2xl px-6 py-4 max-w-lg">
                   <span className="text-champagne font-bold text-lg shrink-0 mt-0.5">→</span>
                   <p className="font-mono text-[11px] text-champagne/80 leading-relaxed">{step.proof}</p>
