@@ -1,109 +1,224 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
-import { Network, Database, Zap } from 'lucide-react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Network, Cpu, BarChart3 } from 'lucide-react';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const LOGS = [
+  { t: '00:00:01', msg: '> INICIANDO DIAGNÓSTICO...', c: 'text-ivory/30' },
+  { t: '00:00:03', msg: '> FRICCIÓN DETECTADA: Alta', c: 'text-red-400/80' },
+  { t: '00:00:05', msg: '> CUELLO DE BOTELLA: Eliminado', c: 'text-champagne/80' },
+  { t: '00:00:07', msg: '> SISTEMA OPTIMIZADO: 100%', c: 'text-green-400' },
+];
+
+function TelemetryMicroUI() {
+  const [visibleCount, setVisibleCount] = useState(0);
+  const [blink, setBlink] = useState(true);
+
+  useEffect(() => {
+    if (visibleCount < LOGS.length) {
+      const t = setTimeout(() => setVisibleCount(v => v + 1), 900);
+      return () => clearTimeout(t);
+    }
+    const loop = setInterval(() => {
+      setVisibleCount(0);
+    }, 4000);
+    return () => clearInterval(loop);
+  }, [visibleCount]);
+
+  useEffect(() => {
+    const b = setInterval(() => setBlink(v => !v), 500);
+    return () => clearInterval(b);
+  }, []);
+
+  return (
+    <div className="h-36 mb-8 relative rounded-2xl bg-obsidian border border-white/10 p-5 font-mono text-xs overflow-hidden flex flex-col justify-end shadow-inner">
+      <div className="absolute top-3 right-3 flex items-center gap-1.5">
+        <span className="w-2 h-2 rounded-full bg-red-500/70" />
+        <span className="w-2 h-2 rounded-full bg-yellow-500/70" />
+        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+      </div>
+      <div className="space-y-1">
+        {LOGS.slice(0, visibleCount).map((l, i) => (
+          <div key={i} className={`flex gap-3 ${l.c} transition-all duration-300`}>
+            <span className="text-ivory/20 shrink-0">{l.t}</span>
+            <span>{l.msg}</span>
+          </div>
+        ))}
+        {visibleCount < LOGS.length && (
+          <span className={`inline-block w-1.5 h-3.5 bg-champagne transition-opacity duration-100 ${blink ? 'opacity-100' : 'opacity-0'}`} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ScaleBarMicroUI() {
+  const [active, setActive] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setActive(true); }, { threshold: 0.5 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
+  const bars = [
+    { label: 'Mes 1', before: 28, after: 28 },
+    { label: 'Mes 2', before: 28, after: 52 },
+    { label: 'Mes 3', before: 28, after: 91 },
+  ];
+
+  return (
+    <div ref={ref} className="h-36 mb-8 relative rounded-2xl bg-obsidian border border-white/10 p-5 overflow-hidden">
+      <span className="font-mono text-[9px] text-ivory/40 tracking-widest uppercase mb-4 block">Capacidad Operativa</span>
+      <div className="flex items-end gap-4 h-20">
+        {bars.map((b, i) => (
+          <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
+            <div className="w-full flex gap-1 items-end justify-center" style={{ height: '60px' }}>
+              <div className="flex-1 bg-white/10 rounded-sm transition-all duration-1000" style={{ height: `${(b.before / 100) * 60}px`, transitionDelay: `${i * 150}ms` }} />
+              <div
+                className="flex-1 bg-champagne rounded-sm transition-all duration-1000"
+                style={{ height: `${active ? (b.after / 100) * 60 : (b.before / 100) * 60}px`, transitionDelay: `${i * 200 + 300}ms` }}
+              />
+            </div>
+            <span className="font-mono text-[8px] text-ivory/30">{b.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CostMicroUI() {
+  const [pct, setPct] = useState(100);
+  const ref = useRef(null);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        let v = 100;
+        const t = setInterval(() => {
+          v -= 1.5;
+          setPct(Math.max(27, Math.round(v)));
+          if (v <= 27) clearInterval(t);
+        }, 30);
+      }
+    }, { threshold: 0.5 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className="h-36 mb-8 relative rounded-2xl bg-obsidian border border-white/10 p-5 overflow-hidden flex flex-col justify-between">
+      <span className="font-mono text-[9px] text-ivory/40 tracking-widest uppercase">Costo por Proceso</span>
+      <div className="flex items-end gap-4">
+        <div>
+          <div className="font-inter font-black text-4xl text-champagne leading-none">{pct}%</div>
+          <div className="font-mono text-[9px] text-ivory/40 mt-1">del costo original</div>
+        </div>
+        <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-champagne rounded-full transition-all duration-75"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+      </div>
+      <div className="font-mono text-[9px] text-green-400">▼ −{100 - pct}% REDUCCIÓN EN 90 DÍAS</div>
+    </div>
+  );
+}
+
+const CARDS = [
+  {
+    icon: <BarChart3 className="w-5 h-5" />,
+    tag: 'ESCALABILIDAD SIN LÍMITE',
+    title: 'Crece ×10 sin contratar ×10',
+    body: 'Tus competidores necesitan 10 personas para hacer lo que tus agentes de IA harán solos. Absorbe el volumen sin tocar tu nómina.',
+    micro: <ScaleBarMicroUI />,
+    highlight: 'El volumen que rechazas hoy, mañana es ingreso capturado.',
+  },
+  {
+    icon: <Cpu className="w-5 h-5" />,
+    tag: 'ELIMINACIÓN DE FRICCIÓN',
+    title: 'Cada hora de proceso manual es dinero tirado',
+    body: 'Mapeamos cada cuello de botella y lo reemplazamos con automatización quirúrgica. Tu equipo deja de apagar incendios y empieza a construir.',
+    micro: <TelemetryMicroUI />,
+    highlight: 'Un proceso optimizado no se cansa, no falla, no se va de vacaciones.',
+  },
+  {
+    icon: <Network className="w-5 h-5" />,
+    tag: 'EFICIENCIA RADICAL',
+    title: 'Mismos resultados. 73% menos costo.',
+    body: 'Automatizamos lo predecible para que lo extraordinario lo haga tu equipo. Rentabilidad que se mide desde el primer mes.',
+    micro: <CostMicroUI />,
+    highlight: 'No es tecnología. Es ventaja competitiva que dura años.',
+  },
+];
 
 export default function Features() {
   const sectionRef = useRef(null);
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      gsap.from(".feature-card", {
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 75%",
-        },
-        y: 60,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.2,
-        ease: "power3.out"
+      gsap.from('.feat-title', {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
+        y: 50, opacity: 0, duration: 1, ease: 'power3.out',
+      });
+      gsap.from('.feature-card', {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 65%' },
+        y: 70, opacity: 0, duration: 0.9, stagger: 0.18, ease: 'power3.out',
       });
     }, sectionRef);
     return () => ctx.revert();
   }, []);
 
   return (
-    <section id="soluciones" ref={sectionRef} className="py-32 px-6 bg-obsidian relative z-10 w-full">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-20 text-center">
-          <h2 className="text-4xl md:text-5xl font-inter font-bold text-ivory mb-4">
-            Ingeniería de <span className="text-drama text-champagne text-5xl md:text-6xl">Precisión</span>
-          </h2>
-          <p className="text-ivory/60 font-inter max-w-2xl mx-auto text-lg">
-            Sistemas automatizados que transforman la complejidad operativa en un flujo continuo y escalable.
+    <section id="soluciones" ref={sectionRef} className="py-36 px-6 bg-obsidian relative z-10 w-full">
+
+      {/* Section label */}
+      <div className="max-w-6xl mx-auto mb-20">
+        <div className="feat-title flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <span className="font-mono text-[11px] text-champagne tracking-[0.25em] uppercase mb-4 block">Propuesta de Valor</span>
+            <h2 className="text-4xl md:text-5xl font-inter font-black text-ivory leading-tight tracking-tight">
+              La IA no es el futuro.<br />
+              <span className="text-drama text-champagne text-5xl md:text-6xl font-normal">Es la ventaja que ya perdiste.</span>
+            </h2>
+          </div>
+          <p className="text-ivory/50 font-inter max-w-sm text-base leading-relaxed font-light md:text-right">
+            Mientras lees esto, empresas de tu sector ya están operando 3 veces más rápido con la mitad del personal.
           </p>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Card 1: Escalar */}
-          <div className="feature-card rounded-organic bg-slate/30 border border-white/5 p-8 relative overflow-hidden group hover:border-champagne/30 transition-colors duration-500">
-            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
-              <Network className="w-32 h-32 text-champagne" strokeWidth={0.5} />
-            </div>
-            
-            {/* Micro-UI: Card Shuffler */}
-            <div className="h-32 mb-10 relative">
-               <div className="absolute inset-0 bg-obsidian/50 rounded-2xl border border-white/5 flex items-center justify-center -rotate-6 transform transition-all duration-500 group-hover:-rotate-12 group-hover:-translate-x-2"></div>
-               <div className="absolute inset-0 bg-obsidian/80 rounded-2xl border border-white/10 flex items-center justify-center rotate-3 transform transition-all duration-500 group-hover:rotate-6 group-hover:translate-x-2"></div>
-               <div className="absolute inset-0 bg-[#1A1A24] rounded-2xl border border-champagne/20 flex flex-col items-center justify-center transform transition-transform duration-500 shadow-xl group-hover:scale-105">
-                 <span className="text-data text-[10px] text-champagne/70 mb-2 tracking-widest">ESTADO DEL SISTEMA</span>
-                 <span className="font-inter font-bold text-xl text-ivory tracking-wide">Escala Ilimitada</span>
-               </div>
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+        {CARDS.map((c, i) => (
+          <div
+            key={i}
+            className="feature-card rounded-[2.5rem] bg-[#0F0F16] border border-white/5 p-8 relative overflow-hidden group hover:border-champagne/25 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(201,168,76,0.08)] flex flex-col"
+          >
+            {/* Corner glow */}
+            <div className="absolute top-0 right-0 w-48 h-48 bg-champagne/5 rounded-full blur-[60px] pointer-events-none group-hover:bg-champagne/12 transition-colors duration-700" />
+
+            {/* Tag */}
+            <div className="flex items-center gap-2 mb-6">
+              <span className="p-2 rounded-xl bg-champagne/10 text-champagne">{c.icon}</span>
+              <span className="font-mono text-[9px] text-champagne/60 tracking-widest uppercase">{c.tag}</span>
             </div>
 
-            <h3 className="text-2xl font-inter font-bold text-ivory mb-3">Escalar sin invertir</h3>
-            <p className="text-ivory/60 font-inter leading-relaxed text-sm font-light">
-              Crece sin la fricción de multiplicar tus costos fijos. Implementamos agentes que absorben el volumen de trabajo como una extensión natural de tu equipo.
-            </p>
+            {/* Micro UI */}
+            {c.micro}
+
+            {/* Copy */}
+            <h3 className="text-xl font-inter font-black text-ivory mb-3 leading-tight">{c.title}</h3>
+            <p className="text-ivory/55 font-inter leading-relaxed text-sm font-light mb-6 flex-1">{c.body}</p>
+
+            {/* Bottom highlight */}
+            <div className="pt-5 border-t border-white/5">
+              <p className="font-mono text-[10px] text-champagne/70 leading-relaxed">{c.highlight}</p>
+            </div>
           </div>
-
-          {/* Card 2: Cuellos de botella */}
-          <div className="feature-card rounded-organic bg-slate/30 border border-white/5 p-8 relative overflow-hidden group hover:border-champagne/30 transition-colors duration-500">
-            {/* Micro-UI: Telemetry Typewriter */}
-            <div className="h-32 mb-10 relative rounded-2xl bg-obsidian border border-white/10 p-5 font-mono text-xs overflow-hidden flex flex-col justify-end shadow-inner">
-              <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-champagne animate-pulse"></div>
-              <div className="text-ivory/30 mb-2">&gt; ANALIZANDO FLUJOS...</div>
-              <div className="text-ivory/50 mb-2">&gt; DETECTANDO FRICCIÓN...</div>
-              <div className="text-champagne/80 mb-2 transition-all duration-500 group-hover:translate-x-2">&gt; RESOLVIENDO CUELLO DE BOTELLA</div>
-              <div className="text-ivory flex items-center gap-2 transition-all duration-500 group-hover:translate-x-2">
-                <span>&gt; OPTIMIZADO: 100%</span>
-                <span className="w-1.5 h-3 bg-champagne animate-pulse"></span>
-              </div>
-            </div>
-
-            <h3 className="text-2xl font-inter font-bold text-ivory mb-3">Eliminar fricción</h3>
-            <p className="text-ivory/60 font-inter leading-relaxed text-sm font-light">
-              Identificamos y suprimimos los cuellos de botella que retrasan tus operaciones, creando sistemas donde la información fluye de manera instantánea y precisa.
-            </p>
-          </div>
-
-          {/* Card 3: Eficiencia */}
-          <div className="feature-card rounded-organic bg-slate/30 border border-white/5 p-8 relative overflow-hidden group hover:border-champagne/30 transition-colors duration-500">
-            {/* Micro-UI: Protocol Scheduler */}
-            <div className="h-32 mb-10 relative rounded-2xl bg-obsidian border border-white/10 p-5 overflow-hidden">
-               <div className="flex justify-between items-center mb-4 pb-2 border-b border-white/10">
-                 <span className="text-data text-[10px] text-ivory/40 tracking-widest">CRONOGRAMA</span>
-                 <span className="text-data text-[9px] text-obsidian font-bold bg-champagne px-2 py-0.5 rounded-sm">AUTO</span>
-               </div>
-               <div className="space-y-3 relative z-0">
-                 <div className="h-2 bg-slate/50 rounded-full w-full overflow-hidden"><div className="h-full bg-champagne rounded-full w-3/4 transition-all duration-1000 group-hover:w-full"></div></div>
-                 <div className="h-2 bg-slate/50 rounded-full w-full overflow-hidden"><div className="h-full bg-champagne/70 rounded-full w-1/2 transition-all duration-1000 group-hover:w-[90%] delay-100"></div></div>
-                 <div className="h-2 bg-slate/50 rounded-full w-full overflow-hidden"><div className="h-full bg-champagne/40 rounded-full w-[85%] transition-all duration-1000 group-hover:w-[95%] delay-200"></div></div>
-                 
-                 {/* Animated cursor */}
-                 <svg className="absolute -top-1 left-1/3 w-4 h-4 text-ivory drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all duration-1000 group-hover:translate-x-20 group-hover:translate-y-4 z-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                   <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" fill="currentColor"/>
-                 </svg>
-               </div>
-            </div>
-
-            <h3 className="text-2xl font-inter font-bold text-ivory mb-3">Duplicar eficiencia</h3>
-            <p className="text-ivory/60 font-inter leading-relaxed text-sm font-light">
-              Automatizamos tareas repetitivas y predictibles, permitiendo que tu equipo humano se enfoque exclusivamente en la estrategia de alto nivel y el cierre de ventas.
-            </p>
-          </div>
-
-        </div>
+        ))}
       </div>
     </section>
   );
