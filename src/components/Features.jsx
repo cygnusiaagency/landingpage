@@ -13,19 +13,19 @@ const LOGS = [
 ];
 
 function TelemetryMicroUI() {
-  const [visibleCount, setVisibleCount] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(1);
   const [blink, setBlink] = useState(true);
 
   useEffect(() => {
-    if (visibleCount < LOGS.length) {
-      const t = setTimeout(() => setVisibleCount(v => v + 1), 900);
-      return () => clearTimeout(t);
-    }
-    const loop = setInterval(() => {
-      setVisibleCount(0);
-    }, 4000);
-    return () => clearInterval(loop);
-  }, [visibleCount]);
+    const advance = () => {
+      setVisibleCount(v => {
+        if (v >= LOGS.length) return 1;
+        return v + 1;
+      });
+    };
+    const t = setInterval(advance, 1100);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     const b = setInterval(() => setBlink(v => !v), 500);
@@ -41,7 +41,7 @@ function TelemetryMicroUI() {
       </div>
       <div className="space-y-1">
         {LOGS.slice(0, visibleCount).map((l, i) => (
-          <div key={i} className={`flex gap-3 ${l.c} transition-all duration-300`}>
+          <div key={i} className={`flex gap-3 ${l.c}`}>
             <span className="text-ivory/20 shrink-0">{l.t}</span>
             <span>{l.msg}</span>
           </div>
@@ -58,7 +58,7 @@ function ScaleBarMicroUI() {
   const [active, setActive] = useState(false);
   const ref = useRef(null);
   useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setActive(true); }, { threshold: 0.5 });
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setActive(true); }, { threshold: 0.3 });
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
   }, []);
@@ -76,7 +76,7 @@ function ScaleBarMicroUI() {
         {bars.map((b, i) => (
           <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
             <div className="w-full flex gap-1 items-end justify-center" style={{ height: '60px' }}>
-              <div className="flex-1 bg-white/10 rounded-sm transition-all duration-1000" style={{ height: `${(b.before / 100) * 60}px`, transitionDelay: `${i * 150}ms` }} />
+              <div className="flex-1 bg-white/10 rounded-sm transition-all duration-1000" style={{ height: `${(b.before / 100) * 60}px` }} />
               <div
                 className="flex-1 bg-champagne rounded-sm transition-all duration-1000"
                 style={{ height: `${active ? (b.after / 100) * 60 : (b.before / 100) * 60}px`, transitionDelay: `${i * 200 + 300}ms` }}
@@ -92,10 +92,12 @@ function ScaleBarMicroUI() {
 
 function CostMicroUI() {
   const [pct, setPct] = useState(100);
+  const [started, setStarted] = useState(false);
   const ref = useRef(null);
   useEffect(() => {
     const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) {
+      if (e.isIntersecting && !started) {
+        setStarted(true);
         let v = 100;
         const t = setInterval(() => {
           v -= 1.5;
@@ -103,10 +105,10 @@ function CostMicroUI() {
           if (v <= 27) clearInterval(t);
         }, 30);
       }
-    }, { threshold: 0.5 });
+    }, { threshold: 0.3 });
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
-  }, []);
+  }, [started]);
 
   return (
     <div ref={ref} className="h-36 mb-8 relative rounded-2xl bg-obsidian border border-white/10 p-5 overflow-hidden flex flex-col justify-between">
@@ -160,13 +162,23 @@ export default function Features() {
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      gsap.from('.feat-title', {
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
-        y: 50, opacity: 0, duration: 1, ease: 'power3.out',
-      });
-      gsap.from('.feature-card', {
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 65%' },
-        y: 70, opacity: 0, duration: 0.9, stagger: 0.18, ease: 'power3.out',
+      // Simple fade-in animations that fire reliably
+      gsap.fromTo('.feat-title',
+        { y: 40, autoAlpha: 0 },
+        {
+          y: 0, autoAlpha: 1, duration: 1, ease: 'power3.out',
+          scrollTrigger: { trigger: '.feat-title', start: 'top 90%', toggleActions: 'play none none none' }
+        }
+      );
+      gsap.utils.toArray('.feature-card').forEach((card, i) => {
+        gsap.fromTo(card,
+          { y: 60, autoAlpha: 0 },
+          {
+            y: 0, autoAlpha: 1, duration: 0.9, ease: 'power3.out',
+            delay: i * 0.15,
+            scrollTrigger: { trigger: card, start: 'top 92%', toggleActions: 'play none none none' }
+          }
+        );
       });
     }, sectionRef);
     return () => ctx.revert();
@@ -174,7 +186,6 @@ export default function Features() {
 
   return (
     <section id="soluciones" ref={sectionRef} className="py-36 px-6 bg-obsidian relative z-10 w-full">
-
       {/* Section label */}
       <div className="max-w-6xl mx-auto mb-20">
         <div className="feat-title flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -197,23 +208,14 @@ export default function Features() {
             key={i}
             className="feature-card rounded-[2.5rem] bg-[#0F0F16] border border-white/5 p-8 relative overflow-hidden group hover:border-champagne/25 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(201,168,76,0.08)] flex flex-col"
           >
-            {/* Corner glow */}
             <div className="absolute top-0 right-0 w-48 h-48 bg-champagne/5 rounded-full blur-[60px] pointer-events-none group-hover:bg-champagne/12 transition-colors duration-700" />
-
-            {/* Tag */}
             <div className="flex items-center gap-2 mb-6">
               <span className="p-2 rounded-xl bg-champagne/10 text-champagne">{c.icon}</span>
               <span className="font-mono text-[9px] text-champagne/60 tracking-widest uppercase">{c.tag}</span>
             </div>
-
-            {/* Micro UI */}
             {c.micro}
-
-            {/* Copy */}
             <h3 className="text-xl font-inter font-black text-ivory mb-3 leading-tight">{c.title}</h3>
             <p className="text-ivory/55 font-inter leading-relaxed text-sm font-light mb-6 flex-1">{c.body}</p>
-
-            {/* Bottom highlight */}
             <div className="pt-5 border-t border-white/5">
               <p className="font-mono text-[10px] text-champagne/70 leading-relaxed">{c.highlight}</p>
             </div>
