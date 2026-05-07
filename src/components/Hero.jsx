@@ -64,7 +64,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section ref={heroRef} className="relative h-[100dvh] w-full flex items-end justify-center overflow-hidden bg-obsidian">
+    <section ref={heroRef} className="relative min-h-[100dvh] w-full flex items-center justify-center overflow-hidden bg-obsidian py-24">
 
       {/* Background */}
       <div className="absolute inset-0 z-0">
@@ -90,7 +90,7 @@ export default function Hero() {
         style={{ backgroundImage: 'linear-gradient(rgba(201,168,76,1) 1px, transparent 1px), linear-gradient(90deg, rgba(201,168,76,1) 1px, transparent 1px)', backgroundSize: '80px 80px' }} />
 
       {/* Content */}
-      <div className="hero-content relative z-10 w-full max-w-6xl mx-auto px-6 pb-20 flex flex-col items-center text-center">
+      <div className="hero-content relative z-10 w-full max-w-6xl mx-auto px-6 flex flex-col items-center text-center">
 
         <div className="hero-badge inline-flex items-center gap-2 px-5 py-2 rounded-full border border-champagne/30 bg-champagne/5 text-champagne text-[11px] font-mono tracking-[0.25em] mb-10 uppercase backdrop-blur-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-champagne animate-pulse" />
