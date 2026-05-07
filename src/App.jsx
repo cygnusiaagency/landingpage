@@ -20,7 +20,7 @@ function App() {
         <rect width="100%" height="100%" filter="url(#noiseFilter)" />
       </svg>
       
-      <main className="relative z-10 w-full overflow-hidden">
+      <main className="relative z-10 w-full">
         <Header />
         <Hero />
         <Features />
